@@ -11,40 +11,52 @@ async function scrapeWebsite() {
   await page.goto('https://www.maccosmetics.ca/deals', 
     {waitUntil: "domcontentloaded"});
 
-//   await page.waitForSelector('.product-price--sale');
+    await page.waitForSelector('.product-brief-v2');
+    
 
-//   const priceElement = await page.$('.product-price--sale ');  
-//   const price = await page.evaluate(el => el.textContent, priceElement);
+    const saleElements = await page.$$eval('.product-brief-v2', item => {
+        return item.map(element => {
+            const item_name = element.querySelector(".product-brief__product-name").innerText;
+            const item_orig_price = element.querySelector(".product-price--discounted").innerText;
+            const item_sale_price = element.querySelector(".product-price--sale").innerText;
+
+
+            // const sale_item_image = await page.$('.product-brief__container');
+            // await sale_item_image.screenshot({ path: sale_item_name+'.png' });
+
+
+            // const sale_item_image = async (name) => {
+            //     const product_image = await page.waitForSelector('.product-brief__container');
+            //     await product_image.screenshot({
+            //     path: name,
+            //     });
+            // }
+
+            // sale_item_image(sale_item_name)
+            
+            return {item_name, item_orig_price, item_sale_price};
+        });
+      });
+
+    
   
-// // " js-product-price--sale"
+    console.log(saleElements)
 
-//   console.log(price)
+//   await page.waitForSelector('.product-brief__details');
 
-  await page.waitForSelector('.product-price--sale');
-
-  const saleElements = await page.$$eval('.product-price--sale', sale_item => {
-    return sale_item.map(item => item.textContent);
-  });
-  
-// " js-product-price--sale"
-
-  console.log(saleElements)
-
-//  // Extract data from the page
-//  const sale_prices = await page.evaluate(() => {
-//     const saleElements = document.querySelectorAll('.produpct-price--sale');
-
-//     return Array.from(saleElements).map((sale_item) => {
-//         const text = sale_item.querySelector(".text").innerText;
-
-//     //   author: quote.querySelector('.author').innerText
-
-//     return {text};
+//   const product_image = await page.waitForSelector('.product-brief__container');
+//     await product_image.screenshot({
+//     path: 'div.png',
 //     });
-//   });
 
-//   // Display the extracted data
-//   console.log(sale_Elements);
+//   const saleElement_names = await page.$$eval('.product-brief__product-name', item_name => {
+//     return item_name.map(item => item.textContent);
+//   });
+  
+
+//   console.log(saleElement_names)
+
+
 
   // Close the browser
   await browser.close();
